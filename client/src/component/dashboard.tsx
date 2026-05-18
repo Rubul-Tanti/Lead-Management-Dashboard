@@ -3,6 +3,7 @@ import {  useEffect} from "react";
 import { motion, useSpring, useTransform, type Variants } from "framer-motion";
 import Header from "./header";
 import LeadTable from "./LeadTable";
+import AddLeadModal from "./addLead";
 
  export const counts = { New: 0, Contacted: 0, Qualified: 0, Lost: 0 };
 

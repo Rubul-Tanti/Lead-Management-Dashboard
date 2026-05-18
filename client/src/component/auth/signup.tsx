@@ -4,7 +4,7 @@ import { Loader } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAuthentication } from "../../hooks/useAuthentication";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [step, setStep] = useState(1);
@@ -17,7 +17,7 @@ export default function Register() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { registerUserWithEmail: emailVerification, otpVerifation, registerWithGoogle } = useAuthentication();
   const { setUser } = useUserContext();
-
+    const navigate = useNavigate()
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   const startTimer = () => {
@@ -94,6 +94,7 @@ export default function Register() {
         localStorage.setItem('access_token', v.data.access_token);
         toast('User created successfully');
         setStep(3);
+        navigate("/")
       },
       onError: (e) => { toast.error(e.message); }
     });
@@ -114,6 +115,7 @@ export default function Register() {
             profilePicture: v.data.data.profilePicture
           });
           setStep(3);
+          navigate("/")
         },
         onError: (e: any) => {
           if (e.response) toast.error(e.response.data.message);
