@@ -3,7 +3,7 @@ import { createContext, useContext, useState, type SetStateAction
  } from "react";
  type UserType= {
     isAuthenticated:boolean
-    role:'ADMIN'|'VIEWER'|'SUBSCRIBER'|null,
+    role:'ADMIN'|'SALE_USERS'|null,
          userName:string|null,
         email:string|null,
         profilePicture:string|null,

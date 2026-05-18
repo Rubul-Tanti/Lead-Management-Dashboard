@@ -1,6 +1,8 @@
+import { FaChevronDown } from "react-icons/fa";
 import {motion} from "framer-motion"
 import { useUserContext } from "../contextProvider"
-
+import { Link } from "react-router-dom"
+import { CgProfile } from "react-icons/cg";
   // CSV Export
   function exportCSV() {
     // const cols = ["Name", "Email", "Status", "Source", "Created"];
@@ -25,7 +27,7 @@ const Header=()=>{
             <p className="mt-0.5 text-sm text-gray-500">Track and manage your sales pipeline</p>
           </div>
           {user.isAuthenticated?
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap gap-5 items-center gap-2">
 
             <motion.button
               onClick={exportCSV}
@@ -35,17 +37,28 @@ const Header=()=>{
             >
               <span>⬇</span> Export CSV
             </motion.button>
+            {user.isAuthenticated&&user.role==='ADMIN'&&
 
             <motion.button
-              onClick={() => {  }}
-              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+              onClick={exportCSV}
+              className="flex items-center cursor-pointer gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
             >
-              <span>＋</span> Add Lead
+              Admin
+            </motion.button>
+}
+            <motion.button
+              onClick={() => {  }}
+              className="flex justify-center items-center flex-col  text-black  rounded-xl  text-xs font-medium text-white transition "
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {user.isAuthenticated?user.profilePicture?<img src={user.profilePicture}/>:<CgProfile color="purple" size={25} />:<></>}
+              <p className="text-zinc-700 flex items-center justify-center">{user.userName||"Profile"}</p>
             </motion.button>
           </div>
-          :
+          :<Link to="/signin">
             <motion.button
               onClick={() => {  }}
               className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
@@ -53,7 +66,8 @@ const Header=()=>{
               whileTap={{ scale: 0.97 }}
             >
             Sign In
-            </motion.button>}
+            </motion.button>
+            </Link>}
 
         </motion.div>
 }
