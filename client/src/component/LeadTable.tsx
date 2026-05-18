@@ -1,4 +1,4 @@
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion, type Variants} from 'framer-motion'
 import { useRef, useState,useEffect } from 'react';
 import { counts } from './dashboard';
 const INITIAL_LEADS: Lead[] = [
@@ -311,7 +311,7 @@ const [page, setPage]             = useState(1);
 
   // Animation variants
 
-  const rowVariants = {
+  const rowVariants:Variants = {
     hidden:  { opacity: 0, x: -8 },
     visible: (i: number) => ({ opacity: 1, x: 0, transition: { delay: i * 0.04, duration: 0.3, ease: "easeOut" } }),
     exit:    { opacity: 0, x: 8, transition: { duration: 0.2 } },
