@@ -1,10 +1,10 @@
 import { emailTransporter } from "../../config/emailTransporter"
-import { env } from "../../config/config.env"
+import { env } from "../../config/env_config"
 import logger from "../../utils/logger"
 
 const sendResetPasswordToken = async (token: string, email: string) => {
   try {
-    const resetLink = `${env.FRONTEND_URL}/reset-password?token=${token}?email=${email}`
+    const resetLink = `${env.frontend_url}/reset-password?token=${token}?email=${email}`
 
     const html = `
     <div style="background-color:#ffffff; padding:40px 0; font-family:Arial, Helvetica, sans-serif;">
@@ -46,7 +46,7 @@ const sendResetPasswordToken = async (token: string, email: string) => {
     `
 
     return await emailTransporter.sendMail({
-      from: `Tanti SK <${env.EMAIL}>`,
+      from: `Tanti SK <${env.email}>`,
       to: email,
       subject: "Reset Your Password",
       html

@@ -12,7 +12,7 @@ import {
 
 import { env } from "../config/env_config"
 
-import { User, UserRole } from "../db/userSchema"
+import { User } from "../Models/userSchema"
 
 import { getsafeUser } from "../controler/auth/user_controler"
 
@@ -20,6 +20,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/generateToken"
+import { UserRole } from "../types/user"
 
 
 // TYPES

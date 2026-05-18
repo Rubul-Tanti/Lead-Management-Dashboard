@@ -5,9 +5,9 @@ import jwt, {
   JsonWebTokenError,
 } from "jsonwebtoken"
 import { Request, Response } from "express"
-import { loginUserSchema } from "../../utils/validation/userValidation"
+import { loginUserSchema } from "../../validation/userValidation"
 import { comparePassword } from "../../utils/hashPassword"
-import { registerUserSchema } from "../../utils/validation/userValidation"
+import { registerUserSchema } from "../../validation/userValidation"
 import { hashPassword } from "../../utils/hashPassword"
 import {
   generateAccessToken,
@@ -16,8 +16,8 @@ import {
 
 import logger from "../../utils/logger"
 
-import { IUser, User } from "../../db/userSchema"
-import { Otp } from "../../db/otpSchema"
+import { IUser, User } from "../../Models/userSchema"
+import { Otp } from "../../Models/otpSchema"
 import { ApiError } from "../../middleware/errorHandler"
 import { env } from "../../config/env_config"
 
@@ -396,4 +396,6 @@ export const logout = async (
 }
 export const updateUser=async()=>{}
 
-export const asignRole=async()=>{}
+export const asignRole=async()=>{
+  try{}catch(e){}
+}

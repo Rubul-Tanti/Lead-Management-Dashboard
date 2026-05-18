@@ -25,7 +25,6 @@ const otpSchema = new Schema<IOtp>({
   },
 })
 
-otpSchema.index({ email: 1 })
 
 export const Otp: Model<IOtp> =
   mongoose.models.Otp ||
