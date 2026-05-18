@@ -1,4 +1,3 @@
-import { FaChevronDown } from "react-icons/fa";
 import {motion} from "framer-motion"
 import { useUserContext } from "../contextProvider"
 import { Link } from "react-router-dom"
