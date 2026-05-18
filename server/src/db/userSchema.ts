@@ -5,11 +5,6 @@ export enum UserRole {
   SALE_USERS="SALE_USERS"
 }
 
-export enum AuthProvider {
-  EMAIL = "EMAIL",
-  GOOGLE = "GOOGLE",
-  FACEBOOK = "FACEBOOK",
-}
 
 
 // USER INTERFACE
@@ -20,7 +15,7 @@ export interface IUser extends Document {
   password?: string
 
   role: UserRole
-  authProvider: AuthProvider
+  authProvider: 'EMAIL'|'GOOGLE'
 
   googleId?: string
 
@@ -79,8 +74,8 @@ const userSchema = new Schema<IUser>(
 
     authProvider: {
       type: String,
-      enum: Object.values(AuthProvider),
-      default: AuthProvider.EMAIL,
+      enum: ['EMAIL,GOOGLE'],
+      default:'EMAIL',
     },
 
     googleId: String,

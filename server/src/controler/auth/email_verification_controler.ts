@@ -8,7 +8,7 @@ import { sendOtp } from "../../services/emailService/sendOtp"
 import { User } from "../../db/userSchema"
 import { Otp } from "../../db/otpSchema"
 
-const emailValidation = z.object({
+export const emailValidation = z.object({
   email: z.email(),
 })
 

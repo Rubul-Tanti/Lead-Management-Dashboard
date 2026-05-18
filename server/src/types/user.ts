@@ -1,0 +1,1 @@
+export type UserRole = 'ADMIN' | 'SALE_USERS'
