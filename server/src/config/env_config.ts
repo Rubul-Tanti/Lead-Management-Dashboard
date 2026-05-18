@@ -8,7 +8,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-
+  DATABASE_URL:z.string(),
   SMTP_HOST: z.string().min(1),
   SMTP_PORT: z.coerce.number(), // converts string → number
   EMAIL: z.string().email(),
@@ -26,6 +26,7 @@ const envSchema = z.object({
 const parsedEnv = envSchema.parse(process.env);
 
 export const env = {
+  databaseUrl:parsedEnv.DATABASE_URL,
   frontend_url:parsedEnv.FRONTEND_URL,
   port: parsedEnv.PORT,
   node_env: parsedEnv.NODE_ENV,
