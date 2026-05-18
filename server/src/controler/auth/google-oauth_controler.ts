@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ApiError } from "../../middleware/errorHandler";
 import logger from "../../utils/logger";
-import { User, UserRole } from "../../db/userSchema";
+import { User} from "../../Models/userSchema";
 import { generateAccessToken, generateRefreshToken } from "../../utils/generateToken";
 
 export const registerWithGoogle = async (req: Request, res: Response) => {
@@ -73,7 +73,7 @@ export const registerWithGoogle = async (req: Request, res: Response) => {
       profilePicture: googleUser.picture,
       googleId: googleUser.sub,
       authProvider:'GOOGLE',
-      role: UserRole.SALE_USERS,
+      role:'SALE_USERS',
     });
     if(!newUser){
         throw new ApiError("")

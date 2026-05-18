@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { env } from "../config/config.env";
+import { env } from "../config/env_config";
 
 export const generateAccessToken = (userId: string) => {
   return jwt.sign(
     { userId },
-    env.JWT_ACCESS_SECRET as string,
+    env.jwt_access_secret as string,
     {
       expiresIn:'15m',
     }
@@ -14,7 +14,7 @@ export const generateAccessToken = (userId: string) => {
 export const generateRefreshToken = (userId: string) => {
   return jwt.sign(
     { userId },
-    env.JWT_REFRESH_SECRET as string,
+    env.jwt_refresh_secret as string,
     {
       expiresIn:'30d',
     }

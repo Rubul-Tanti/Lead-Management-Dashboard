@@ -1,5 +1,5 @@
-import {emailTransporter} from "../../config/emailTransporter"
-import { env } from "../../config/config.env"
+import { emailTransporter } from "../../config/emailTransporter"
+import { env } from "../../config/env_config"
 import logger from "../../utils/logger"
 
 export const sendOtp=async(email:string,otp:string)=>{
@@ -91,7 +91,7 @@ const html = `
 </html>
 `;
     return emailTransporter.sendMail({
-    from:`Tanti  ${env.EMAIL}`
+    from:`Tanti  ${env.email}`
     ,to:email,
     subject:'Your Varification Code ',
     html

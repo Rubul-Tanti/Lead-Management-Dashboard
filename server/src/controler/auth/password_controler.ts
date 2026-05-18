@@ -17,7 +17,7 @@ import sendResetPasswordToken from "../../services/emailService/sendResetToken"
 
 import { getsafeUser } from "./user_controler"
 
-import { User } from "../../db/userSchema"
+import { User } from "../../Models/userSchema"
 
 
 

@@ -1,11 +1,4 @@
 import mongoose, { Schema, Document, Model } from "mongoose"
-// ENUMS
-export enum UserRole {
-  ADMIN = "ADMIN",
-  SALE_USERS="SALE_USERS"
-}
-
-
 
 // USER INTERFACE
 
@@ -14,7 +7,7 @@ export interface IUser extends Document {
   email: string
   password?: string
 
-  role: UserRole
+  role:'ADMIN'|'SALE_USERS'
   authProvider: 'EMAIL'|'GOOGLE'
 
   googleId?: string
@@ -68,13 +61,13 @@ const userSchema = new Schema<IUser>(
 
     role: {
       type: String,
-      enum: Object.values(UserRole),
-      default: UserRole.ADMIN,
+      enum:['ADMIN','SALE_USERS'],
+      default:'SALE_USERS',
     },
 
     authProvider: {
       type: String,
-      enum: ['EMAIL,GOOGLE'],
+      enum: ['EMAIL','GOOGLE'],
       default:'EMAIL',
     },
 
@@ -136,9 +129,6 @@ const userSchema = new Schema<IUser>(
 
 
 // INDEXES
-
-
-userSchema.index({ email: 1 })
 userSchema.index({ role: 1 })
 userSchema.index({ deletedAt: 1 })
 // MODEL

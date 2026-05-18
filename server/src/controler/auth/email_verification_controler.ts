@@ -5,8 +5,8 @@ import logger from "../../utils/logger"
 import { generateOtp } from "../../utils/generateOtp"
 import { sendOtp } from "../../services/emailService/sendOtp"
 
-import { User } from "../../db/userSchema"
-import { Otp } from "../../db/otpSchema"
+import { User } from "../../Models/userSchema"
+import { Otp } from "../../Models/otpSchema"
 
 export const emailValidation = z.object({
   email: z.email(),
