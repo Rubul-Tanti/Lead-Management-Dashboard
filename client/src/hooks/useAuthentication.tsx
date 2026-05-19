@@ -1,5 +1,5 @@
 import { useUserContext } from "../contextProvider";
-import {handleLoginWithEmail, handleEmailVerifation,handleGoogleRegistration,  handleLoginWithAccessToken, handleOtpVerification } from "../api-services/authentication";
+import {handleLoginWithEmail, handleEmailVerifation,handleGoogleRegistration,  handleLoginWithAccessToken, handleOtpVerification, handleLogout } from "../api-services/authentication";
 import { useMutation } from "@tanstack/react-query";
 
 export const useAuthentication = () => {
@@ -29,8 +29,8 @@ const {setUser}=useUserContext()
     },
   })
   const loginWithEmail=useMutation({mutationFn:handleLoginWithEmail})
-
-  return {loginWithAccessToken,registerWithGoogle,
+  const logout=useMutation({mutationFn:handleLogout})
+  return {loginWithAccessToken,registerWithGoogle,logout,
 loginWithEmail,  otpVerifation,registerUserWithEmail,
   };
 };

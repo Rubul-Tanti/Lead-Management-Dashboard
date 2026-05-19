@@ -14,7 +14,7 @@ import { env } from "../config/env_config"
 
 import { User } from "../Models/userSchema"
 
-import { getsafeUser } from "../controler/auth/user_controler"
+import { getsafeUser } from "../controler/user/user_controler"
 
 import {
   generateAccessToken,

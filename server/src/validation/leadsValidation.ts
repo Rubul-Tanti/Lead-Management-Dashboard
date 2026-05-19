@@ -13,10 +13,10 @@ name:z.string().min(3).max(200).optional()
 })
 
 export const leadsFilterSchema=z.object({
-page:z.number().min(1).optional(),
-limit:z.number().min(10).max(50).optional(),
+page:z.coerce.number().min(1).optional(),
+limit:z.coerce.number().min(5).max(50).optional(),
 status:z.enum(["new", "contacted", "qualified", "lost"]).optional(),
 source:z.enum(["website", "instagram", "referral"]).optional(),
-search:z.string().min(1).optional(),
+search:z.string().optional(),
 sort:z.enum(['latest','oldest']).optional()
 })

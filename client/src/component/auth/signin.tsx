@@ -7,11 +7,12 @@ import { Loader } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate=useNavigate()
   const [loading, setLoading] = useState(false);
   const { registerWithGoogle, loginWithEmail } = useAuthentication();
   const { setUser } = useUserContext();
@@ -31,6 +32,7 @@ export default function Login() {
           profilePicture: v.data.data.profilePicture,
         });
         setLoading(false);
+        navigate("/")
       },
       onError: (e: any) => {
         setLoading(false);
@@ -52,7 +54,9 @@ export default function Login() {
             email: v.data.data.email,
             userName: v.data.data.userName,
             profilePicture: v.data.data.profilePicture,
+
           });
+        navigate("/")
         },
         onError: (e: any) => {
           if (e.response) toast.error(e.response.data.message);

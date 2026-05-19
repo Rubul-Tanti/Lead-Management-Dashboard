@@ -9,6 +9,7 @@ import { requestLogger } from './middleware/req_logger'
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler'
 import { corsConfig } from './config/cors_config'
 import { leadRouter } from './routes/lead_routes'
+import userRouter from './routes/user_routes'
 dotenv.config()
 export const app=express()
 ConnectToDb()
@@ -18,6 +19,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(requestLogger)
 app.use("/api/auth",authRouter)
+app.use("/api/user",userRouter)
 app.use("/api/lead",leadRouter)
 app.use(notFoundHandler)
 app.use(globalErrorHandler)

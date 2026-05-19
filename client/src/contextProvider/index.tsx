@@ -29,6 +29,8 @@ export  const ContextProvider=({children}:{children:React.ReactNode})=>{
         profilePicture:null,})
 
 
+
+
     return <UserContext value={{user,setUser}}>{children}</UserContext>
 
 }
