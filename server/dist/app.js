@@ -5,12 +5,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-// import { prisma } from './db/prisma'
+const db_config_1 = require("./config/db_config");
+const auth_routes_1 = __importDefault(require("./routes/auth_routes"));
+const req_logger_1 = require("./middleware/req_logger");
+const errorHandler_1 = require("./middleware/errorHandler");
+const cors_config_1 = require("./config/cors_config");
+const lead_routes_1 = require("./routes/lead_routes");
+const user_routes_1 = __importDefault(require("./routes/user_routes"));
 dotenv_1.default.config();
 exports.app = (0, express_1.default)();
+(0, db_config_1.ConnectToDb)();
+exports.app.use((0, cors_1.default)(cors_config_1.corsConfig));
 exports.app.use((0, helmet_1.default)());
 exports.app.use(express_1.default.json());
 exports.app.use((0, cookie_parser_1.default)());
+exports.app.use(req_logger_1.requestLogger);
+exports.app.use("/api/auth", auth_routes_1.default);
+exports.app.use("/api/user", user_routes_1.default);
+exports.app.use("/api/lead", lead_routes_1.leadRouter);
+exports.app.use(errorHandler_1.notFoundHandler);
+exports.app.use(errorHandler_1.globalErrorHandler);

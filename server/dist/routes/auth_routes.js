@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const errorHandler_1 = require("../middleware/errorHandler");
+const email_verification_controler_1 = require("../controler/auth/email_verification_controler");
+const user_controler_1 = require("../controler/user/user_controler");
+const authentication_1 = __importDefault(require("../middleware/authentication"));
+const google_oauth_controler_1 = require("../controler/auth/google-oauth_controler");
+const password_controler_1 = require("../controler/auth/password_controler");
+const authRouter = express_1.default.Router();
+authRouter.post('/email-verification', (0, errorHandler_1.asyncError)(email_verification_controler_1.emailverification));
+authRouter.post('/register', (0, errorHandler_1.asyncError)(user_controler_1.registerUser));
+authRouter.post('/login', (0, authentication_1.default)([]), (0, errorHandler_1.asyncError)(user_controler_1.LoginUser));
+authRouter.get('/refresh', (0, errorHandler_1.asyncError)(user_controler_1.refreshUser));
+authRouter.get('/logout', (0, authentication_1.default)([]), (0, errorHandler_1.asyncError)(user_controler_1.logout));
+authRouter.post('/register-with-google', (0, errorHandler_1.asyncError)(google_oauth_controler_1.registerWithGoogle));
+authRouter.post('/request-password-change', (0, authentication_1.default)([]), (0, errorHandler_1.asyncError)(password_controler_1.requestPasswordChange));
+authRouter.post('/reset-password', (0, authentication_1.default)([])), (0, errorHandler_1.asyncError)(password_controler_1.resetPassword);
+exports.default = authRouter;
