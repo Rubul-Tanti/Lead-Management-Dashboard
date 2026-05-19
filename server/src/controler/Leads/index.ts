@@ -101,7 +101,6 @@ export const updateLead = async (req: Request, res: Response) => {
 export const getLeads = async (req: Request, res: Response) => {
   try {
     const vr = leadsFilterSchema.safeParse(req.query)
-
     if (!vr.success) {
       return res.status(400).json({
         message: "Input validation error",
@@ -240,5 +239,31 @@ export const deleteLeadById = async (
     }
 
     throw new ApiError("Internal server error", 500)
+  }
+}
+export const getLeadsOverview = async (req: Request, res: Response) => {
+  try {
+    console.log("Hit getLeadsOverview controller")
+
+    const newLeads = await Lead.countDocuments({ status: "new" })
+    const contactedLeads = await Lead.countDocuments({ status: "contacted" })
+    const qualifiedLeads = await Lead.countDocuments({ status: "qualified" })
+    const lostLeads = await Lead.countDocuments({ status: "lost" })
+
+    return res.status(200).json({
+      message: "Leads overview fetched successfully",
+      data: {
+        newLeads,
+        contactedLeads,
+        qualifiedLeads,
+        lostLeads,
+      },
+    })
+  } catch (e) {
+    console.error(e)
+
+    return res.status(500).json({
+      message: "Internal server error",
+    })
   }
 }

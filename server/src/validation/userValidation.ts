@@ -25,3 +25,9 @@ export const updateUserSchema = z.object({
     .optional(),
   isActive:z.boolean().optional()
 });
+
+export const getUsersSchema=z.object({
+  page:z.coerce.number().min(1).optional(),
+  limit:z.coerce.number().min(5).max(50).optional(),
+  userName:z.string().optional()
+})

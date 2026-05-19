@@ -5,7 +5,7 @@ import jwt, {
   JsonWebTokenError,
 } from "jsonwebtoken"
 import { Request, Response } from "express"
-import { loginUserSchema } from "../../validation/userValidation"
+import { getUsersSchema, loginUserSchema } from "../../validation/userValidation"
 import { comparePassword } from "../../utils/hashPassword"
 import { registerUserSchema } from "../../validation/userValidation"
 import { hashPassword } from "../../utils/hashPassword"
@@ -396,6 +396,112 @@ export const logout = async (
 }
 export const updateUser=async()=>{}
 
-export const asignRole=async()=>{
-  try{}catch(e){}
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const validationResult = getUsersSchema.safeParse(req.query)
+
+    if (!validationResult.success) {
+      logger.error(
+        "validation failed at get users",
+        validationResult.error.flatten()
+      )
+
+      return res.status(400).json({
+        success: false,
+        message: "Input validation error",
+        error: validationResult.error.flatten(),
+      })
+    }
+
+    const {
+      page = 1,
+      limit = 10,
+      userName = "",
+    } = validationResult.data
+
+    const users = await User.find({
+      userName: {
+        $regex: userName,
+        $options: "i",
+      },
+    })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .select("-password")
+
+    const totalUsers = await User.countDocuments({
+      userName: {
+        $regex: userName,
+        $options: "i",
+      },
+    })
+
+    return res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      data: users,
+      pagination: {
+        total: totalUsers,
+        page,
+        limit,
+        totalPages: Math.ceil(totalUsers / limit),
+      },
+    })
+  } catch (e) {
+    throw new ApiError("Internal Server Error", 500)
+  }
 }
+
+export const assignRole = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string
+    const { role } = req.body
+
+    if (!role) {
+      return res.status(400).json({
+        success: false,
+        message: "Role is required",
+      })
+    }
+
+    const exists = await User.findById(id)
+
+    if (!exists) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      })
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      {
+        new: true,
+      }
+    ).select("-password")
+
+    return res.status(200).json({
+      success: true,
+      message: "Role updated successfully",
+      data: updatedUser,
+    })
+  } catch (e) {
+    throw new ApiError("Internal Server Error", 500)
+  }
+}
+export const deleteUser=async(req:Request,res:Response)=>{
+  try{
+    const id=req.params.id as string
+    const exists=await User.findById(id)
+    if(!exists){
+      return res.status(404).json({message:"User not found",success:false})
+    }
+    if(exists.role==="ADMIN"){
+      return res.status(400).json({message:"Admin user cannot be deleted",success:false})
+    }
+    await User.findByIdAndDelete(id)
+    return res.status(200).json({message:"User deleted successfully",success:true})
+  }catch(e){
+    throw new ApiError("Internal Server Error", 500)
+  }}
