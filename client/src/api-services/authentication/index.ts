@@ -24,7 +24,7 @@ export const handleRefreshAccessToken=async()=>{
             window.location.reload()
         }
     }catch(e:any){
-        if(e.response.status===404||e.response.status===500){
+        if(e.response.status===401||e.response.status===500){
             localStorage.removeItem('access_token')
         }
         console.log(e.response)

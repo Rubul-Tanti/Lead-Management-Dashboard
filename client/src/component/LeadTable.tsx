@@ -3,14 +3,19 @@ import { useRef, useState, useEffect } from 'react';
 import { useLead } from '../hooks/useLead';
 import type { ILead, Source, Status } from '../api-services/lead/types';
 import { toast } from 'react-toastify';
-
+import { FaInstagram } from 'react-icons/fa';
+import Papa from "papaparse"
+import { CgWebsite } from 'react-icons/cg';
+import { RiUserShared2Fill } from "react-icons/ri";
+import { useUserContext } from '../contextProvider';
+import { useQueryClient } from '@tanstack/react-query';
+import { CiExport } from "react-icons/ci";
 type SortOption = "latest" | "oldest"
 
 interface ModalProps {
   open: boolean;
   editLead: ILead | null;
   onClose: () => void;
-  onSave: (data: Omit<ILead, "id" | "createdAt">) => void;
 }
 
 function LeadModal({ open, editLead, onClose}: ModalProps) {
@@ -20,7 +25,7 @@ function LeadModal({ open, editLead, onClose}: ModalProps) {
   const [status, setStatus] = useState<Status>("new");
   const [source, setSource] = useState<Source>("website");
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  const queryClient=useQueryClient()
   useEffect(() => {
     if (editLead) {
       setName(editLead.name);
@@ -46,10 +51,11 @@ function LeadModal({ open, editLead, onClose}: ModalProps) {
     if (!validate()) return;
     updateLead.mutate({formdata:{name,email,source,status},id:editLead?._id||""},{onSuccess:()=>{
       toast("Lead updated")
+      onClose()
+      queryClient.invalidateQueries({queryKey:['leads']})
     },onError:()=>{
       toast("error while updating")
     }})
-    // onSave({ name: name.trim(), email: email.trim(), status, source });
   }
 
   return (
@@ -192,10 +198,10 @@ const STATUS_DOT: Partial<Record<Status, string>> = {
   lost:      "bg-red-500",
 };
 
-const SOURCE_ICON: Partial<Record<Source, string>> = {
-  website:   "🌐",
-  instagram: "📸",
-  referral:  "🤝",
+const SOURCE_ICON:any = {
+  website:  <CgWebsite />,
+  instagram: <FaInstagram />,
+  referral: <RiUserShared2Fill />,
 };
 
 function formatDate(iso: string): string {
@@ -231,7 +237,8 @@ const LeadTable = () => {
   const [deleteTarget, setDeleteTarget] = useState<ILead | null>(null);
   const [limit, setLimit]             = useState(10);
   const [page, setPage]               = useState(1);
-
+  const {user}=useUserContext()
+  const queryClient=useQueryClient()
   const searchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -241,7 +248,7 @@ const LeadTable = () => {
     searchRef.current = setTimeout(() => setDebouncedSearch(val), 300);
   }
 
-  const { getLeads } = useLead();
+  const { getLeads,deleteLead } = useLead();
   const { data: Leads, isLoading: leadsLoading } = getLeads({
     limit,
     page,
@@ -254,17 +261,60 @@ const LeadTable = () => {
   const totalPages = Leads?.pagination.totalPages ?? 1;
   const safePage   = Math.min(Leads?.pagination?.page ?? 1, totalPages);
 
-  function handleSave(data: Omit<ILead, "id" | "createdAt">) {
-    // TODO: wire up create/update mutations from useLead
-    setModalOpen(false);
-    setEditTarget(null);
-    setPage(1);
+const handleExport = async () => {
+  try {
+ const formatted =
+  Leads?.data?.map((lead, index) => ({
+    "SL No": index + 1,
+    "Lead Name": lead.name,
+    "Email Address": lead.email,
+    "Lead Status": lead.status.toUpperCase(),
+    "Lead Source": lead.source,
+    "Created Date": new Date(
+      lead.createdAt
+    ).toLocaleDateString("en-IN"),
+  })) || []
+
+    const csv = Papa.unparse(formatted)
+
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    })
+
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+
+    link.href = url
+
+    link.setAttribute(
+      "download",
+      `leads-page-${page}.csv`
+    )
+
+    document.body.appendChild(link)
+
+    link.click()
+
+    document.body.removeChild(link)
+
+    URL.revokeObjectURL(url)
+
+    toast.success("CSV exported successfully")
+  } catch (error) {
+    toast.error("Error exporting CSV")
   }
+}
 
   function confirmDelete() {
     if (!deleteTarget) return;
-    // TODO: wire up delete mutation from useLead
-    setDeleteTarget(null);
+      deleteLead.mutate(deleteTarget._id,{onSuccess:()=>{
+        toast("Lead deleted")
+        setDeleteTarget(null);
+        queryClient.invalidateQueries({queryKey:['leads']})
+      },onError:()=>{
+        toast.error("Error while deleting lead")
+      }})
   }
 
   const rowVariants: Variants = {
@@ -354,7 +404,20 @@ const LeadTable = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto ">
+          <div className='flex justify-end'>
+          {/* Export */}
+          <motion.button
+            onClick={handleExport}
+            className="flex m-2 items-center gap-1.5 rounded-xl  border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <CiExport />
+            Export CSV
+          </motion.button>
+          </div>
+
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/80">
@@ -367,7 +430,47 @@ const LeadTable = () => {
             </thead>
             <tbody>
               <AnimatePresence mode="popLayout">
-                {Leads?.data?.length === 0 ? (
+                {leadsLoading?(
+      Array.from({ length: 5 }).map((_, i) => (
+        <motion.tr
+          key={i}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="border-b border-gray-50"
+        >
+          <td className="px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+              <div className="h-4 w-28 animate-pulse rounded bg-gray-200" />
+            </div>
+          </td>
+
+          <td className="px-5 py-4">
+            <div className="h-4 w-40 animate-pulse rounded bg-gray-200" />
+          </td>
+
+          <td className="px-5 py-4">
+            <div className="h-6 w-24 animate-pulse rounded-full bg-gray-200" />
+          </td>
+
+          <td className="px-5 py-4">
+            <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+          </td>
+
+          <td className="px-5 py-4">
+            <div className="h-4 w-20 animate-pulse rounded bg-gray-200" />
+          </td>
+
+          <td className="px-5 py-4">
+            <div className="flex gap-2">
+              <div className="h-8 w-16 animate-pulse rounded-lg bg-gray-200" />
+              <div className="h-8 w-16 animate-pulse rounded-lg bg-gray-200" />
+            </div>
+          </td>
+        </motion.tr>
+      ))
+    ) :Leads?.data?.length === 0 ? (
                   <motion.tr key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <td colSpan={6} className="py-16 text-center text-sm text-gray-400">
                       <div className="mb-2 text-3xl">🔍</div>
@@ -424,13 +527,14 @@ const LeadTable = () => {
                             >
                               Edit
                             </motion.button>
-                            <motion.button
-                              onClick={() => setDeleteTarget(lead)}
-                              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
-                              whileTap={{ scale: 0.95 }}
-                            >
+                            {user.role==='ADMIN' &&
+                               <motion.button
+                                onClick={() => setDeleteTarget(lead)}
+                                className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                                whileTap={{ scale: 0.95 }}
+                              >
                               Delete
-                            </motion.button>
+                            </motion.button>}
                           </div>
                         </td>
                       </motion.tr>
@@ -516,7 +620,6 @@ const LeadTable = () => {
         open={modalOpen}
         editLead={editTarget}
         onClose={() => { setModalOpen(false); setEditTarget(null); }}
-        onSave={handleSave}
       />
 
       <AnimatePresence>

@@ -4,6 +4,7 @@ import Register from "./component/auth/signup"
 import Login from "./component/auth/signin"
 import ForgotPassword from "./component/auth/forgot-password"
 import NotFound from "./component/pageNotFound"
+import AdminPage from "./component/admin/admin"
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
     <Route path="/signup" element={<Register/>}/>
     <Route path="/signin" element={<Login />}/>
     <Route path="/forgot-password" element={<ForgotPassword />}/>
+    <Route path="/admin" element={<AdminPage />}/>
     <Route path="*" element={<NotFound />}/>
   </Routes>
   </>

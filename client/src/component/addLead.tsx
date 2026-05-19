@@ -4,6 +4,7 @@ import { toast } from "react-toastify"
 import { CgSpinner } from "react-icons/cg"
 import { useLead } from "../hooks/useLead"
 import type { Source, Status } from "../api-services/lead/types"
+import { useQueryClient } from "@tanstack/react-query"
 
 type AddLeadModalProps = {
   open: boolean
@@ -26,7 +27,7 @@ const AddLeadModal = ({
     source: "website",
   })
   const {createLead}=useLead()
-    useState(false)
+  const queryClient=useQueryClient()
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -45,6 +46,7 @@ const AddLeadModal = ({
     e.preventDefault()
         createLead.mutate(formData,{onSuccess:()=>{
       toast.success("Lead added successfully")
+      queryClient.invalidateQueries({queryKey:['leads']})
       onClose()
         },onError:()=>{
             toast.error("Error while Creating Lead")

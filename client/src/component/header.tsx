@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import  { useState } from "react"
 import { motion } from "framer-motion"
 import { Link, useNavigate } from "react-router-dom"
 import { CgProfile, CgSpinner } from "react-icons/cg"
@@ -16,22 +16,7 @@ const Header = () => {
   const [openAddForm,setOpenAddForm]=useState(false)
   const [open, setOpen] = useState(false)
 
-  // CSV Export
-  function exportCSV() {
-    // const cols = ["Name", "Email", "Status", "Source", "Created"];
-    // const rows = leads.map((l) => [l.name, l.email, l.status, l.source, l.createdAt]);
-    // const csv  = [cols, ...rows]
-    //   .map((r) => r.map((c) => `"${c}"`).join(","))
-    //   .join("\n");
-    //
-    // const a = document.createElement("a");
-    // a.href =
-    //   "data:text/csv;charset=utf-8," +
-    //   encodeURIComponent(csv);
-    //
-    // a.download = "leads-export.csv";
-    // a.click();
-  }const handlelogout = () => {
+  const handlelogout = () => {
   logout.mutate(undefined, {
     onSuccess: () => {
       setUser({
@@ -80,16 +65,7 @@ const Header = () => {
       {/* Right */}
       {user.isAuthenticated ? (
         <div className="flex flex-wrap items-center gap-5">
-          {/* Export */}
-          <motion.button
-            onClick={exportCSV}
-            className="flex items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <span>⬇</span>
-            Export CSV
-          </motion.button>
+
           <motion.button
             onClick={()=>setOpenAddForm(!openAddForm)}
             className="flex items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
@@ -97,24 +73,6 @@ const Header = () => {
             whileTap={{ scale: 0.97 }}
           >+ Add Lead
           </motion.button>
-
-          {/* Admin */}
-          {user.role === "ADMIN" && (
-            <motion.button
-              onClick={() =>
-                navigate("/admin")
-              }
-              className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-              whileHover={{
-                scale: 1.02,
-              }}
-              whileTap={{
-                scale: 0.97,
-              }}
-            >
-              Admin
-            </motion.button>
-          )}
 
           {/* Profile Dropdown */}
           <div className="relative">
@@ -179,12 +137,6 @@ const Header = () => {
 
                 {/* Menu */}
                 <div className="mt-3 flex flex-col gap-2">
-                {user.role==="ADMIN"&&
-                        <button className="rounded-xl px-3 py-2 text-left text-sm text-gray-700 transition hover:bg-gray-100">
-                    Admin
-                  </button>
-                        }
-
                   {user.role ===
                     "ADMIN" && (
                     <button

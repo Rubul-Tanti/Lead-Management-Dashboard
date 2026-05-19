@@ -15,7 +15,7 @@ const notAllowedWithLogin = [
 ]
 
 const notAllowedWithoutLogin = [
-  "/admin",
+  "/admin",'/'
 ]
 
 const adminRoles = ["ADMIN"]
@@ -51,18 +51,6 @@ const AuthGuard = ({
       localStorage.getItem(
         "access_token"
       )
-
-    // Admin redirect
-    if (
-      hasAdminAccess &&
-      path === "/"
-    ) {
-      navigate("/admin", {
-        replace: true,
-      })
-
-      return
-    }
 
     // Auto login
     if (

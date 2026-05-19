@@ -44,3 +44,13 @@ export interface GetLeadsResponse {
   data: ILead[]
   pagination: Pagination
 }
+
+export type LeadsOverviewResponse = {
+  message: string
+  data: {
+    newLeads: number
+    contactedLeads: number
+    qualifiedLeads: number
+    lostLeads: number
+  }
+}
